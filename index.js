@@ -27,9 +27,8 @@ const connectDB = async () => {
     try {
         if (client.connect()) {
             console.log("____________connected____________");
-            const servicesCollection = client.db('ashikurPhotographer').collection('services');
-            const result = await servicesCollection.insertOne({ sercice: "Weeding photography" })
-            console.log(result);
+            // const result = await servicesCollection.insertOne({ sercice: "Weeding photography" })
+            // console.log(result);
         }
 
 
@@ -39,10 +38,73 @@ const connectDB = async () => {
 }
 
 // collections
+const servicesCollection = client.db('ashikurPhotographer').collection('services');
 
 
 connectDB();
 
+// load limited services data
+app.get("/services", async (req, res) => {
+    try {
+        const query = {};
+        const cursor = servicesCollection.find(query)
+        const servicesData = await cursor.limit(3).toArray();
+        if (servicesData) {
+            res.send({
+                success: true,
+                message: `successfully loaded data`,
+                data: servicesData
+            })
+        }
+        else {
+            res.send({
+                success: false,
+                errMessage: `could not get the data!!`,
+
+            })
+
+        }
+
+    }
+    catch (error) {
+        console.log(error.message);
+        res.send({
+            success: false,
+            error: error.message,
+        })
+    }
+})
+// load all services data
+app.get("/services/all", async (req, res) => {
+    try {
+        const query = {};
+        const cursor = servicesCollection.find(query)
+        const servicesData = await cursor.toArray();
+        if (servicesData) {
+            res.send({
+                success: true,
+                message: `successfully loaded data`,
+                data: servicesData
+            })
+        }
+        else {
+            res.send({
+                success: false,
+                errMessage: `could not get the data!!`,
+
+            })
+
+        }
+
+    }
+    catch (error) {
+        console.log(error.message);
+        res.send({
+            success: false,
+            error: error.message,
+        })
+    }
+})
 
 
 
