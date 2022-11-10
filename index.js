@@ -170,6 +170,43 @@ app.get("/services/:id/reviews", async (req, res) => {
 })
 
 
+// create new review based on specific id service
+
+
+app.post("/services/:id/reviews/add", async (req, res) => {
+
+    try {
+        const reviewData = req.body;
+        // console.log("from client", reviewData);
+        const result = await reviewsCollection.insertOne(reviewData);
+        if (result.insertedId) {
+            res.send({
+                success: true,
+                message: `successfully loaded data`,
+                data: result
+            })
+        }
+        else {
+            res.send({
+                success: false,
+                errMessage: `could not get the data!!`,
+
+            })
+
+        }
+    }
+    catch (error) {
+        console.log(error.message);
+        res.send({
+            success: false,
+            error: error.message,
+        })
+    }
+
+
+})
+
+
 
 
 
