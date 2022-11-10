@@ -170,6 +170,43 @@ app.get("/services/:id/reviews", async (req, res) => {
 })
 
 
+
+// get email based reviews data 
+app.get("/reviews", async (req, res) => {
+    try {
+        const { email } = req.query;
+        // console.log("from query", email);
+        let query = {}
+        if (email) {
+            // filter through email field and value is email from query 
+            query = { reviewerEmail: email }
+        }
+        // console.log(query);
+        const cursor = reviewsCollection.find(query);
+        const reviewsData = await cursor.toArray();
+        // console.log(reviewsData);
+        res.send({
+            success: true,
+            message: `Successfully loaded the data`,
+            data: reviewsData
+        })
+
+    }
+
+    catch (error) {
+        res.send({
+            success: false,
+            error: error.message,
+        })
+    }
+})
+
+
+
+
+
+
+
 // create new review based on specific id service
 
 
