@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const express = require('express');
 const cors = require('cors');
 const app = express();
@@ -39,7 +39,7 @@ const connectDB = async () => {
 
 // collections
 const servicesCollection = client.db('ashikurPhotographer').collection('services');
-
+const reviewsCollection = client.db('ashikurPhotographer').collection('reviews')
 
 connectDB();
 
@@ -105,6 +105,72 @@ app.get("/services/all", async (req, res) => {
         })
     }
 })
+// get service data based on id
+app.get("/services/:id", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const query = { _id: ObjectId(id) };
+        const serviceData = await servicesCollection.findOne(query);
+        if (serviceData) {
+            res.send({
+                success: true,
+                message: `successfully loaded data`,
+                data: serviceData
+            })
+        }
+        else {
+            res.send({
+                success: false,
+                errMessage: `could not get the data!!`,
+
+            })
+
+        }
+        // console.log(serviceData);
+    } catch (error) {
+        console.log(error.message);
+        res.send({
+            success: false,
+            error: error.message,
+        })
+    }
+})
+
+app.get("/services/:id/reviews", async (req, res) => {
+    try {
+        const { id } = req.params;
+        const query = { serviceId: id };
+        // console.log(query);
+        const cursor = reviewsCollection.find(query)
+        const reviewsData = await cursor.toArray();
+        // console.log(reviewsData);
+        if (reviewsData) {
+            res.send({
+                success: true,
+                message: `successfully loaded data`,
+                data: reviewsData
+            })
+        }
+        else {
+            res.send({
+                success: false,
+                errMessage: `could not get the data!!`,
+
+            })
+
+        }
+        // console.log(serviceData);
+    } catch (error) {
+        console.log(error.message);
+        res.send({
+            success: false,
+            error: error.message,
+        })
+    }
+})
+
+
+
 
 
 
